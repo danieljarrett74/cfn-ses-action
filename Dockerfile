@@ -2,8 +2,8 @@
 FROM amazon/aws-cli
 
 # Copies your code file from your action repository to the filesystem path `/` of the container
-COPY entrypoint.sh /entrypoint.sh
-COPY cloudformation.yml /cloudformation.yml
+ADD entrypoint.sh /entrypoint.sh
+ADD cloudformation.yml /cloudformation.yml
 
 
 # RUN export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE \
