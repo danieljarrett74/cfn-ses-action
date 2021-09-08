@@ -1,13 +1,13 @@
 name: 'Hello World'
 description: 'Greet someone and record the time'
 inputs:
-  AWS:  # id of input
+  who-to-greet:  # id of input
     description: 'Who to greet'
     required: true
     default: 'World'
 outputs:
   service-token: # id of output
-    description: 'The service token of this custom cloudformation resource"
+    description: 'The service token of this custom cloudformation resource'
 runs:
   using: 'docker'
   image: 'Dockerfile'
