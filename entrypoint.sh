@@ -8,5 +8,5 @@ echo "$AWS_ACCESS_KEY_ID"
 
 aws --region us-east-1 \
 	cloudformation deploy --stack-name test-stack \
-	--template-file ./cloudformation.yml
+	--template-file /cloudformation.yml
 
