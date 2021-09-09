@@ -1,22 +1,22 @@
 name: 'Hello World'
 description: 'Greet someone and record the time'
 inputs:
-  AWS_ACCESS_KEY_ID:  # id of input
+  aws-access-key-id:
     description: 'AWS_ACCESS_KEY_ID'
     required: true
-  AWS_SECRET_ACCESS_KEY:  # id of input
+  aws-secret-access-key:
     description: 'AWS_SECRET_ACCESS_KEY'
     required: true
-  AWS_DEFAULT_REGION:  # id of input
-    description: 'AWS_DEFAULT_REGION'
+  aws-region:
+    description: 'AWS_REGION'
     required: true    
 outputs:
-  service-token: # id of output
+  service-token:
     description: 'The service token of this custom cloudformation resource'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.AWS_ACCESS_KEY_ID }}
-    - ${{ inputs.AWS_SECRET_ACCESS_KEY }}
-    - ${{ inputs.AWS_DEFAULT_REGION }}
+    - ${{ inputs.aws-access-key-id }}
+    - ${{ inputs.aws-secret-access-key }}
+    - ${{ inputs.aws-region }}

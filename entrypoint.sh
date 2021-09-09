@@ -33,3 +33,13 @@ aws --region $AWS_DEFAULT_REGION \
 	--template-file /cloudformation.yml \
     --parameter-overrides LambdaS3Bucket=$S3_BUCKET \
     --capabilities CAPABILITY_IAM
+
+SERVICE_TOKEN=$(
+  aws cloudformation describe-stacks \
+  --stack-name=$STACK_NAME \
+  --query "Stacks[0].Outputs[?OutputKey=='ServiceToken'].OutputValue" \
+  --output text
+)
+
+
+echo "::set-output name=service-token::$(echo $SERVICE_TOKEN)"
