@@ -4,7 +4,6 @@ FROM amazon/aws-cli
 ADD entrypoint.sh /entrypoint.sh
 ADD cloudformation.yml /cloudformation.yml
 
-RUN apt-get update && apt-get install -y zip
 WORKDIR /lambda
 
 ADD requirements.txt /tmp
