@@ -26,7 +26,7 @@ fi
 aws s3 --region $AWS_DEFAULT_REGION \
     cp \
     /lambda.zip \
-    s3://$(S3_BUCKET)/lambdas/lambda.zip 
+    s3://$S3_BUCKET/lambdas/lambda.zip 
 
 aws --region $AWS_DEFAULT_REGION \
 	cloudformation deploy --stack-name $STACK_NAME \
