@@ -1,15 +1,23 @@
 # Container image that runs your code
 FROM amazon/aws-cli
 
-# Copies your code file from your action repository to the filesystem path `/` of the container
 ADD entrypoint.sh /entrypoint.sh
 ADD cloudformation.yml /cloudformation.yml
 
+RUN apt-get update && apt-get install -y zip
+WORKDIR /lambda
 
-# RUN export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE \
-#  && export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY \
-#  && export AWS_DEFAULT_REGION=us-west-2
+ADD requirements.txt /tmp
+RUN pip install --quiet -t /lambda -r /tmp/requirements.txt
 
-# aws configure
-# Code file to execute when the docker container starts up (`entrypoint.sh`)
+ADD src/ /lambda/
+RUN python -m compileall -q /lambda
+
+RUN find /lambda -type d | xargs -I {} chmod ugo+rx "{}" && \
+    find /lambda -type f | xargs -I {} chmod ugo+r "{}"
+
+
+ARG ZIPFILE=lambda.zip
+RUN zip --quiet -9r /${ZIPFILE}  .
+
 ENTRYPOINT ["/entrypoint.sh"]

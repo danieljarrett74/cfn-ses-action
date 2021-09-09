@@ -1,24 +1,79 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Metadata: 
-  License: Apache-2.0
-Description: 'AWS CloudFormation Sample Template S3_Website_Bucket_With_Retain_On_Delete:
-  Sample template showing how to create a publicly accessible S3 bucket configured
-  for website access with a deletion policy of retain on delete. **WARNING** This
-  template creates an S3 bucket that will NOT be deleted when the stack is deleted.
-  You will be billed for the AWS resources used if you create a stack from this template.'
+Description: CloudFormation SES Providers
+Parameters:
+  LambdaS3Bucket:
+    Type: String
+    Default: ''
+
 Resources:
-  S3Bucket:
-    Type: AWS::S3::Bucket
+  LambdaPolicy:
+    Type: AWS::IAM::Policy
     Properties:
-      AccessControl: PublicRead
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: error.html
-    DeletionPolicy: Retain
-Outputs:
-  WebsiteURL:
-    Value: !GetAtt [S3Bucket, WebsiteURL]
-    Description: URL for website hosted on S3
-  S3BucketSecureURL:
-    Value: !Join ['', ['https://', !GetAtt [S3Bucket, DomainName]]]
-    Description: Name of S3 bucket to hold website content
+      PolicyName: CFNSESProviderPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:InvokeFunction
+            Resource:
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:binxio-cfn-ses-provider'
+          - Effect: Allow
+            Action:
+              - route53:GetHostedZone
+              - route53:ChangeResourceRecordSets
+              - route53:ListResourceRecordSets
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - ses:VerifyDomainDkim
+              - ses:DeleteIdentity
+              - ses:ListIdentities
+              - ses:VerifyDomainIdentity
+              - ses:DescribeActiveReceiptRuleSet
+              - ses:SetActiveReceiptRuleSet
+              - ses:GetIdentityVerificationAttributes
+              - ses:GetIdentityNotificationAttributes
+              - ses:SetIdentityNotificationTopic
+              - ses:SetIdentityHeadersInNotificationsEnabled
+              - ses:SetIdentityFeedbackForwardingEnabled
+              - ses:ListIdentityPolicies
+              - ses:GetIdentityPolicies
+              - ses:PutIdentityPolicy
+              - ses:DeleteIdentityPolicy
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - logs:*
+            Resource: arn:aws:logs:*:*:*
+      Roles:
+        - !Ref 'LambdaRole'
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+  CFNSESProvider:
+    Type: AWS::Lambda::Function
+    DependsOn:
+      - LambdaPolicy
+    Properties:
+      Description: CloudFormation SES provider implementation
+      Code:
+        S3Bucket: !Ref 'LambdaS3Bucket'
+        S3Key: lambdas/lambda.zip
+      FunctionName: cfn-ses-provider
+      Handler: ses.handler
+      MemorySize: 128
+      Role: !GetAtt 'LambdaRole.Arn'
+      Runtime: python3.8
+      Timeout: 30
