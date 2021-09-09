@@ -7,7 +7,8 @@ RUN yum update -y \
 
 RUN amazon-linux-extras | grep -i python
 RUN amazon-linux-extras enable python3.8
-RUN yum install -y python3.8
+RUN yum install -y python3.8 \
+    && yum install -y python38-pip
 
 ADD entrypoint.sh /entrypoint.sh
 ADD cloudformation.yml /cloudformation.yml
