@@ -16,7 +16,7 @@ ADD cloudformation.yml /cloudformation.yml
 WORKDIR /lambda
 
 ADD requirements.txt /tmp
-RUN pip install --quiet -t /lambda -r /tmp/requirements.txt
+RUN pip3 install --quiet -t /lambda -r /tmp/requirements.txt
 
 ADD src/ /lambda/
 RUN python -m compileall -q /lambda
