@@ -17,7 +17,7 @@ Resources:
             Action:
               - lambda:InvokeFunction
             Resource:
-              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:binxio-cfn-ses-provider'
+              - !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-ses-provider'
           - Effect: Allow
             Action:
               - route53:GetHostedZone
@@ -80,4 +80,4 @@ Resources:
 
 Outputs:
   ServiceToken:
-    Value: !Ref CFNSESProvider
+    Value: !GetAtt CFNSESProvider.Arn
