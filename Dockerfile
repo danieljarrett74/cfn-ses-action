@@ -19,7 +19,7 @@ RUN find /lambda -type d | xargs -I {} chmod ugo+rx "{}" && \
 
 
 ARG ZIPFILE=lambda.zip
-RUN zip -9r /${ZIPFILE}  .
+RUN zip --quiet -9r /${ZIPFILE}  .
 RUN pwd && ls
 
 ENTRYPOINT ["/entrypoint.sh"]
