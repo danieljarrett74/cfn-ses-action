@@ -1,14 +1,7 @@
 # Container image that runs your code
-FROM amazon/aws-cli
-
-RUN yum update -y \
-  && yum install -y amazon-linux-extras \
-  && yum clean all
-
-RUN amazon-linux-extras | grep -i python
-RUN amazon-linux-extras enable python3.8
-RUN yum install -y python3.8 \
-    && yum install -y python38-pip
+FROM python:3.9
+RUN apt-get update && apt-get install -y zip \
+    && apt-get install -y awscli
 
 ADD entrypoint.sh /entrypoint.sh
 ADD cloudformation.yml /cloudformation.yml
