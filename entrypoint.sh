@@ -23,12 +23,13 @@ else
 fi
 
 
-aws s3 \
+aws s3 --region $AWS_DEFAULT_REGION \
     cp \
     /lambda/lambda.zip \
     s3://$(S3_BUCKET)/lambdas/lambda.zip 
 
-aws --region us-east-1 \
+aws --region $AWS_DEFAULT_REGION \
 	cloudformation deploy --stack-name $STACK_NAME \
 	--template-file /cloudformation.yml \
-    --parameter-overrides LambdaS3Bucket=$S3_BUCKET
+    --parameter-overrides LambdaS3Bucket=$S3_BUCKET \
+    --capabilities CAPABILITY_IAM
